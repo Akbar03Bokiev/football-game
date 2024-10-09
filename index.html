@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: green;
+        }
+
+        #gameCanvas {
+            border: 2px solid white;
+            background-color: lightgreen;
+        }
+
+        .ball {
+            width: 50px;
+            height: 50px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg');
+            background-size: cover;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const context = canvas.getContext('2d');
+
+        const ball = {
+            x: canvas.width / 2 - 25,
+            y: canvas.height / 2 - 25,
+            width: 50,
+            height: 50,
+            dx: 0,
+            dy: 0,
+            speed: 5
+        };
+
+        function drawBall() {
+            const ballImg = new Image();
+            ballImg.src = 'https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg'; // Мяч
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(ballImg, ball.x, ball.y, ball.width, ball.height);
+        }
+
+        function updateBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            // Удерживаем мяч внутри поля
+            if (ball.x < 0) ball.x = 0;
+            if (ball.y < 0) ball.y = 0;
+            if (ball.x + ball.width > canvas.width) ball.x = canvas.width - ball.width;
+            if (ball.y + ball.height > canvas.height) ball.y = canvas.height - ball.height;
+        }
+
+        function moveBall(e) {
+            if (e.key === 'ArrowUp') {
+                ball.dy = -ball.speed;
+            } else if (e.key === 'ArrowDown') {
+                ball.dy = ball.speed;
+            } else if (e.key === 'ArrowLeft') {
+                ball.dx = -ball.speed;
+            } else if (e.key === 'ArrowRight') {
+                ball.dx = ball.speed;
+            }
+        }
+
+        function stopBall(e) {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                ball.dy = 0;
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                ball.dx = 0;
+            }
+        }
+
+        function gameLoop() {
+            updateBall();
+            drawBall();
+            requestAnimationFrame(gameLoop);
+        }
+
+        document.addEventListener('keydown', moveBall);
+        document.addEventListener('keyup', stopBall);
+
+        gameLoop();
+    </script>
+</body>
+</html>
